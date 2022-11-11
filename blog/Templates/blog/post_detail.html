@@ -1,0 +1,59 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<style>
+  .msg-delete{
+    margin: 5px 0px;
+  }
+</style>
+	<article class="media  posts_of_user">
+  <div class="media-body">
+    <div class="article-metadata">
+      <img class="rounded-circle article-img  profile-img" src="{{ post.author.profile.image.url }}">
+      <a class="mr-2" href="#">{{ post.author }}</a>
+      <small >{{ post.date_posted|date:"F d ,Y"}}</small>
+      {% if post.author == user %}
+      <div class="buttons">
+        <a class= 'btn btn-secondary btn-sm mt-1 mb-1 update-btn'  href="{% url 'post-update' post.id %}">Update</a>
+        <a class= 'btn btn-danger btn-sm mt-1 mb-1' href="{% url 'post-delete' post.id %}">Delete</a>
+      </div>
+      {% endif %}
+    <h2 style="color: white;">{{ post.title }}</a></h2></div>
+    <p class="article-content">{{ post.content }}</p>
+    <h2 style="text-align: center;">Comments</h2>
+
+     <div> 
+             {% for message in post_messages %}
+    <div class="message-post article-metadata">
+        <small> <img class="rounded-circle article-img account_img" src="{{ message.user.profile.image.url }}">
+          <a class="mr-2" href="{% url 'userpost' message.user.username %}">@{{ message.user }} </a>
+
+          {{ message.created|timesince }} ago</small>
+                 <p>
+            {{ message.body }}
+            <hr color="white">
+        </p>
+          {% if  request.user == message.user%}
+        <a  class="btn btn-outline-danger msg-delete" href="{% url 'delete-message' message.id %}">Delete</a>
+        {% endif %}
+      </div>
+
+    </div>
+
+
+     <div>
+      
+    {%  endfor %}
+     </div>
+     {% if request.user.is_authenticated %}
+  <div class="comment-form">
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="text" name="body"  placeholder="Comment here.." style="padding: 4px; margin: 4px 0px;">
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+</article>
+
+  {% endblock content %}
